@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { nanoid } from 'nanoid';
 import 'normalize.css';
 import './App.css';
@@ -37,6 +37,16 @@ class App extends Component {
     this.setState({ filter: e.currentTarget.value });
   };
 
+  getFilter = () => {
+    const { filter, contacts } = this.state;
+
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter),
+    );
+  };
+
   deleteContact = contactId => {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== contactId),
@@ -44,23 +54,20 @@ class App extends Component {
   };
 
   render() {
-    const normalizedFilter = this.state.filter.toLowerCase();
-
-    const visibleContacts = this.state.contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter),
-    );
+    const { filter } = this.state;
+    const visibleContacts = this.getFilter();
 
     return (
-      <Fragment>
+      <>
         <h1>Phonebook</h1>
         <ContactForm onSubmit={this.addContact} />
         <h2>Contacts</h2>
-        <Filter value={this.state.filter} onChange={this.changeFilter} />
+        <Filter value={filter} onChange={this.changeFilter} />
         <ContactList
           contacts={visibleContacts}
           onDeleteContact={this.deleteContact}
         />
-      </Fragment>
+      </>
     );
   }
 }
